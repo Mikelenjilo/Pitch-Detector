@@ -20,6 +20,7 @@ class AudioStreamHandler: EventChannel.StreamHandler {
     private var thread: Thread? = null
 
     private val mainHandler = Handler(Looper.getMainLooper())
+    private lateinit var window: DoubleArray
 
 
     @RequiresPermission(Manifest.permission.RECORD_AUDIO)
@@ -36,11 +37,12 @@ class AudioStreamHandler: EventChannel.StreamHandler {
     @RequiresPermission(Manifest.permission.RECORD_AUDIO)
     private fun startRecording(events: EventChannel.EventSink?) {
         val sampleRate = 44100
-        val bufferSize = AudioRecord.getMinBufferSize(
-            sampleRate,
-            AudioFormat.CHANNEL_IN_MONO,
-            AudioFormat.ENCODING_PCM_16BIT
-        )
+        val bufferSize = 4096
+        window = DoubleArray(bufferSize)
+
+        for (i in window.indices) {
+            window[i] = 0.5 * (1 - cos(2 * Math.PI * i / (bufferSize - 1)))
+        }
 
         audioRecord = AudioRecord(
             MediaRecorder.AudioSource.MIC,
@@ -67,7 +69,7 @@ class AudioStreamHandler: EventChannel.StreamHandler {
                     }
 
                     for (i in doubleBuffer.indices) {
-                        doubleBuffer[i] *= (0.5 * (1 - cos(2 * Math.PI * i / (doubleBuffer.size - 1))))
+                        doubleBuffer[i] *= window[i]
                     }
 
                     val fft = org.jtransforms.fft.DoubleFFT_1D(doubleBuffer.size.toLong())

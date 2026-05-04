@@ -2,7 +2,8 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:pitch_detector/services/native_bridge.dart';
+import 'package:pitch_detector/native/native_bridge.dart';
+import 'package:pitch_detector/services/musical_note_converter.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,6 +16,7 @@ class _HomePageState extends State<HomePage> {
   final List<double> _dataPoints = [];
   final int _maxDataPoints = 100;
   StreamSubscription<double>? _subscription;
+  final _noteConverter = MusicalNoteConverter();
 
   @override
   void initState() {
@@ -66,7 +68,11 @@ class _HomePageState extends State<HomePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                "Current Value: ${_dataPoints.isNotEmpty ? _dataPoints.last : 'Loading...'}",
+                "Note: ${_noteConverter.convert(_dataPoints.last).note}",
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+              Text(
+                "Frequency: ${_dataPoints.isNotEmpty ? _dataPoints.last : 'Loading...'}",
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
               const SizedBox(height: 20),
