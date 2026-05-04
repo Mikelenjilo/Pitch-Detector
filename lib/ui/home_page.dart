@@ -12,9 +12,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final List<int> _dataPoints = [];
+  final List<double> _dataPoints = [];
   final int _maxDataPoints = 100;
-  StreamSubscription<int>? _subscription;
+  StreamSubscription<double>? _subscription;
 
   @override
   void initState() {
@@ -46,7 +46,7 @@ class _HomePageState extends State<HomePage> {
 
     double minVal = 0;
     double maxVal = 100;
-    
+
     if (_dataPoints.isNotEmpty) {
       minVal = _dataPoints.reduce(min).toDouble();
       maxVal = _dataPoints.reduce(max).toDouble();

@@ -30,6 +30,10 @@ android {
         versionName = flutter.versionName
     }
 
+    dependencies {
+        implementation("com.github.wendykierp:JTransforms:3.1")
+    }
+
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.

@@ -9,7 +9,10 @@ import android.os.Looper
 import android.provider.MediaStore
 import androidx.annotation.RequiresPermission
 import io.flutter.plugin.common.EventChannel
+import kotlin.math.cos
 import kotlin.math.max
+import org.jtransforms.fft.DoubleFFT_1D
+import kotlin.math.sqrt
 
 class AudioStreamHandler: EventChannel.StreamHandler {
     private var audioRecord: AudioRecord? = null
@@ -56,10 +59,45 @@ class AudioStreamHandler: EventChannel.StreamHandler {
             while (isRecording) {
                 val read = audioRecord?.read(buffer, 0, buffer.size) ?: 0
 
+
                 if (read > 0) {
-                    val maxAmplitude = buffer.maxOrNull() ?: 0
+                    val doubleBuffer = DoubleArray(read)
+                    for (i in 0 until read) {
+                        doubleBuffer[i] = buffer[i].toDouble()
+                    }
+
+                    for (i in doubleBuffer.indices) {
+                        doubleBuffer[i] *= (0.5 * (1 - cos(2 * Math.PI * i / (doubleBuffer.size - 1))))
+                    }
+
+                    val fft = org.jtransforms.fft.DoubleFFT_1D(doubleBuffer.size.toLong())
+                    fft.realForward(doubleBuffer)
+
+                    // Compute magnitude
+                    val magnitudes = DoubleArray(doubleBuffer.size / 2)
+
+                    for (i in magnitudes.indices) {
+                        val real = doubleBuffer[2 * i]
+                        val imag = doubleBuffer[2 * i + 1]
+                        magnitudes[i] = sqrt(real * real + imag * imag)
+                    }
+
+                    // Find peak
+                    var maxIndex = 0
+                    var maxValue = Double.MIN_VALUE
+
+                    for (i in magnitudes.indices) {
+                        if (magnitudes[i] > maxValue) {
+                            maxValue = magnitudes[i]
+                            maxIndex = i
+                        }
+                    }
+
+                    // Convert to frequency
+                    val frequency = maxIndex * sampleRate / doubleBuffer.size.toDouble()
+
                     mainHandler.post {
-                        events?.success(maxAmplitude)
+                        events?.success(frequency)
                     }
                 }
             }
