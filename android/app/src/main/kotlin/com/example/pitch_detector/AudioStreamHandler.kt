@@ -11,7 +11,7 @@ import io.flutter.plugin.common.EventChannel
 import kotlin.math.*
 import org.jtransforms.fft.DoubleFFT_1D
 
-class AudioStreamHandler : EventChannel.StreamHandler {
+class AudioStreamHandler: EventChannel.StreamHandler {
 
     private var audioRecord: AudioRecord? = null
     private var isRecording = false
@@ -22,8 +22,16 @@ class AudioStreamHandler : EventChannel.StreamHandler {
     private lateinit var window: DoubleArray
     private val freqHistory = ArrayDeque<Double>()
 
+
+    var sampleRate: Int = 44100
+    var bufferSize: Int = 8192
+
     @RequiresPermission(Manifest.permission.RECORD_AUDIO)
     override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
+        if (arguments is Map<*, *>) {
+            (arguments["sampleRate"] as? Int)?.let { sampleRate = it }
+            (arguments["bufferSize"] as? Int)?.let { bufferSize = it }
+        }
         startRecording(events)
     }
 
@@ -34,8 +42,6 @@ class AudioStreamHandler : EventChannel.StreamHandler {
     @RequiresPermission(Manifest.permission.RECORD_AUDIO)
     private fun startRecording(events: EventChannel.EventSink?) {
 
-        val sampleRate = 44100
-        val bufferSize = 4096
 
         window = DoubleArray(bufferSize)
         for (i in window.indices) {
