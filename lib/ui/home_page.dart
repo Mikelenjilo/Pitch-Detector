@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:pitch_detector/native/native_bridge.dart';
+import 'package:pitch_detector/services/audio_service.dart';
 import 'package:pitch_detector/services/musical_note_converter.dart';
 import 'package:pitch_detector/models/note_result.dart';
 
@@ -75,19 +75,26 @@ class _HomePageState extends State<HomePage> {
               Column(
                 children: [
                   Text(
-                    currentNote != null && currentNote.isValid ? "${currentNote.note} / ${currentNote.solfegeNote}" : "--",
+                    currentNote != null && currentNote.isValid
+                        ? "${currentNote.note} / ${currentNote.solfegeNote}"
+                        : "--",
                     style: GoogleFonts.outfit(
                       fontSize: 64,
                       fontWeight: FontWeight.bold,
                       color: Colors.cyanAccent,
                       shadows: [
-                        Shadow(color: Colors.cyanAccent.withOpacity(0.5), blurRadius: 20),
+                        Shadow(
+                          color: Colors.cyanAccent.withOpacity(0.5),
+                          blurRadius: 20,
+                        ),
                       ],
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    currentNote != null && currentNote.isValid ? "${currentNote.frequency.toStringAsFixed(1)} Hz" : "Waiting for audio...",
+                    currentNote != null && currentNote.isValid
+                        ? "${currentNote.frequency.toStringAsFixed(1)} Hz"
+                        : "Waiting for audio...",
                     style: GoogleFonts.inter(
                       fontSize: 24,
                       color: Colors.white70,
@@ -103,13 +110,17 @@ class _HomePageState extends State<HomePage> {
                         Text(
                           "Flat",
                           style: TextStyle(
-                            color: currentNote.cents < -10 ? Colors.redAccent : Colors.white30,
+                            color: currentNote.cents < -10
+                                ? Colors.redAccent
+                                : Colors.white30,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         Expanded(
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0,
+                            ),
                             child: Stack(
                               alignment: Alignment.center,
                               children: [
@@ -130,11 +141,17 @@ class _HomePageState extends State<HomePage> {
                                     width: 16,
                                     height: 16,
                                     decoration: BoxDecoration(
-                                      color: currentNote.cents.abs() < 10 ? Colors.greenAccent : Colors.cyanAccent,
+                                      color: currentNote.cents.abs() < 10
+                                          ? Colors.greenAccent
+                                          : Colors.cyanAccent,
                                       shape: BoxShape.circle,
                                       boxShadow: [
                                         BoxShadow(
-                                          color: (currentNote.cents.abs() < 10 ? Colors.greenAccent : Colors.cyanAccent).withOpacity(0.5),
+                                          color:
+                                              (currentNote.cents.abs() < 10
+                                                      ? Colors.greenAccent
+                                                      : Colors.cyanAccent)
+                                                  .withOpacity(0.5),
                                           blurRadius: 8,
                                         ),
                                       ],
@@ -154,7 +171,9 @@ class _HomePageState extends State<HomePage> {
                         Text(
                           "Sharp",
                           style: TextStyle(
-                            color: currentNote.cents > 10 ? Colors.redAccent : Colors.white30,
+                            color: currentNote.cents > 10
+                                ? Colors.redAccent
+                                : Colors.white30,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -162,7 +181,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                 ],
               ),
-              
+
               // Bottom Section: Chart
               Container(
                 height: 250,
@@ -172,7 +191,11 @@ class _HomePageState extends State<HomePage> {
                   borderRadius: BorderRadius.circular(24),
                   border: Border.all(color: Colors.white12),
                   boxShadow: [
-                    BoxShadow(color: Colors.black.withOpacity(0.5), blurRadius: 20, offset: const Offset(0, 10)),
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.5),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    ),
                   ],
                 ),
                 child: ClipRRect(
@@ -180,7 +203,11 @@ class _HomePageState extends State<HomePage> {
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: _dataPoints.isEmpty
-                        ? const Center(child: CircularProgressIndicator(color: Colors.cyanAccent))
+                        ? const Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.cyanAccent,
+                            ),
+                          )
                         : LineChart(
                             LineChartData(
                               minY: minVal,

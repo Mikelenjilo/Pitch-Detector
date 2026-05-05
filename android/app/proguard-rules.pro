@@ -1,0 +1,5 @@
+-dontwarn sun.misc.Cleaner
+-dontwarn sun.misc.Unsafe
+-dontwarn pl.edu.icm.jlargearrays.**
+-keep class org.jtransforms.** { *; }
+-keep class pl.edu.icm.jlargearrays.** { *; }
