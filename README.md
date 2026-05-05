@@ -2,7 +2,9 @@
 
 A real-time pitch detection app built with **Flutter** and native **Kotlin** audio processing. It listens to audio from the microphone, detects the fundamental frequency using FFT analysis, and displays the corresponding musical note with a live tuning indicator and waveform chart.
 
-![App Screenshot](screenshots/app_screenshot.png)
+<p align="center">
+  <img src="screenshots/app_screenshot.png" height="500">
+</p>
 
 ---
 
@@ -28,16 +30,16 @@ A real-time pitch detection app built with **Flutter** and native **Kotlin** aud
 ### Architecture
 
 ```
-┌────────────────────────────────────────────────────┐
+┌────────────────────────────────────────────────────-┐
 │                    Flutter (Dart)                   │
-│                                                    │
+│                                                     │
 │  AudioService ──► MusicalNoteConverter ──► HomePage │
-│  (EventChannel)     (Freq → Note)        (UI/Chart)│
-└──────────────┬─────────────────────────────────────┘
+│  (EventChannel)     (Freq → Note)        (UI/Chart) │
+└──────────────┬─────────────────────────────────────-┘
                │ EventChannel
                │ "pitch_detector/audio_stream"
 ┌──────────────▼─────────────────────────────────────┐
-│               Android (Kotlin)                      │
+│               Android (Kotlin)                     │
 │                                                    │
 │  MainActivity ──► AudioStreamHandler               │
 │  (registers        (AudioRecord + FFT)             │
